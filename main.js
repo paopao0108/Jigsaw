@@ -1,5 +1,11 @@
 var blockWrap = document.querySelector('.wrap');
 var resetBtn = document.querySelector('.reset');
+var timer = document.querySelector('.timer .value');
+var score = document.querySelector('.success .value');
+var success = document.querySelector('.success');
+
+var second = 0; // 计时器秒数
+var timerInterval;
 
 const blockWidth = 80; // 一个块的长宽
 const blockHeight = 80;
@@ -76,13 +82,20 @@ const InversePairs = data => {
   return num;
 };
 
+// 打乱 所有的block 并保证 空方块 在最后
 function shuffleBlock() {
+  console.log('==========打乱==========');
   removeBlank(blockArr);
+  console.log('移除blank', blockArr);
   shuffle(blockArr);
+  console.log('打乱blank1', blockArr);
+
   while (InversePairs(blockArr) % 2 !== 0 || InversePairs(blockArr) === 0) {
     // 当逆序数对为奇数时无解，需重排至逆序数对为偶数; 当逆序数为0时，是正确顺序，需重排
     shuffle(blockArr);
   }
+  console.log('打乱blank2', blockArr);
+
   addBlank(blockArr);
   console.log('打乱后blockArr', blockArr);
 }
@@ -148,7 +161,19 @@ function exchange(arr, a, b) {
   arr[b] = tmp;
 }
 
-shuffleBlock();
+// 重置操作
+function reset() {
+  clearInterval(timerInterval);
+  second = 0;
+  timer.innerText = second;
+  timerInterval = setInterval(function () {
+    second++;
+    timer.innerText = second;
+  }, 1000);
+  shuffleBlock();
+}
+
+reset();
 createBlock();
 
 // 监听方块点击事件：1 判断是否可交换 2 交换后是否为正确顺序
@@ -161,16 +186,15 @@ fragments.forEach((fragment, i) => {
     // 移动方块
     isChangeposition(fragment, i);
     // 判断是否为正确位置
+    console.log(blockArr);
     if (isCorrectposition()) {
-      console.log('success');
+      clearInterval(timerInterval);
+      score.innerText = second;
+      success.classList.add('active');
     }
   });
 });
 
-// 重置数组
 resetBtn.addEventListener('click', function () {
-  shuffleBlock();
-  fragments.forEach((fragment, i) => {
-    fragment.innerText = blockArr[i];
-  });
+  location.reload();
 });
