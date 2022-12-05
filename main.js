@@ -44,6 +44,7 @@ function addBlank(blockArr) {
   blockArr.push('blank'); // 再在末尾添加 blank
 }
 
+// 打乱数组
 const shuffle = arr => arr.sort(() => 0.5 - Math.random());
 
 // 计算逆序数对 函数
@@ -147,7 +148,9 @@ function isChangeposition(fragment, i) {
 function isCorrectposition() {
   for (let i = 0; i < blocksNumber - 1; i++) {
     if (blockArr[i] !== 'block') {
+      // 不是空白块
       if (blockArr[i] !== i + 1) {
+        // 出现第一个顺序不一致，直接返回
         return false;
       }
     }
@@ -196,5 +199,6 @@ fragments.forEach((fragment, i) => {
 });
 
 resetBtn.addEventListener('click', function () {
+  // 强制刷新页面
   location.reload();
 });
